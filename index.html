@@ -160,13 +160,17 @@
                 <label>ASI Promotion Date</label>
                 <input type="month" id="promoDate" value="2021-11">
             </div>
+            <div class="input-group">
+                <label>Special Increment Date (e.g., CM Medal)</label>
+                <input type="month" id="specialIncDate" value="2018-11">
+            </div>
         </div>
 
-        <h2>Manual BP Overrides (For Clerical Errors & Medals)</h2>
-        <p style="font-size: 12px; color: #666;">Leave "Due BP" blank to maintain pure mathematical entitlement.</p>
+        <h2>Clerical Errors & Manual Overrides</h2>
+        <p style="font-size: 12px; color: #666;">Enter the Exact Drawn BP. The engine will automatically sync the difference to the Due BP to maintain mathematical purity.</p>
         <div id="overrideContainer">
             </div>
-        <button onclick="addOverrideRow('', '', '')">+ Add BP Override</button>
+        <button onclick="addOverrideRow('', '')">+ Add Clerical Fix</button>
 
         <h2>HRA % Timeline (Post-July 2018)</h2>
         <div id="hraContainer">
@@ -249,13 +253,12 @@
     }
 
     // UI Add Row Functions
-    function addOverrideRow(month, drawnVal, dueVal) {
+    function addOverrideRow(month, drawnVal) {
         const row = document.createElement('div');
         row.className = 'dynamic-block';
         row.innerHTML = `
             <div class="input-group"><label>Month/Year</label><input type="month" class="over-month" value="${month}"></div>
-            <div class="input-group"><label>Drawn BP Override</label><input type="number" class="over-drawn" value="${drawnVal}"></div>
-            <div class="input-group"><label>Due BP Override</label><input type="number" class="over-due" value="${dueVal}"></div>
+            <div class="input-group"><label>Exact Drawn BP</label><input type="number" class="over-drawn" value="${drawnVal}"></div>
             <button class="btn-remove" onclick="this.parentElement.remove()">X</button>
         `;
         document.getElementById('overrideContainer').appendChild(row);
@@ -275,11 +278,10 @@
         document.getElementById('hraContainer').appendChild(row);
     }
 
-    // Pre-fill user-specific known anomalies perfectly mapping Drawn to Due calculations
+    // Pre-fill user-specific known clerical errors (Auto-syncs difference to Due side)
     window.onload = function() {
-        addOverrideRow('2018-07', 27210, ''); // July 18 Rounding Anomaly: Only Drawn was messed up. Due stays pure.
-        addOverrideRow('2018-11', 28030, 28710); // CM Medal: Real increment applied to BOTH scales.
-        addOverrideRow('2019-10', 28880, ''); // Oct 19 Dept Correction: Only Drawn needed fixing. Due stays pure.
+        addOverrideRow('2018-07', 27210); // July 18 Rounding Anomaly
+        addOverrideRow('2019-10', 28880); // Oct 19 Dept Correction
     };
 
     function getHraRate(dateStr) {
@@ -304,24 +306,21 @@
         const asiHikeExtra = parseFloat(document.getElementById('asiHikeExtra').value);
         const macpDate = document.getElementById('macpDate').value;
         const promoDate = document.getElementById('promoDate').value;
+        const specialIncDate = document.getElementById('specialIncDate').value;
 
-        // Parse Overrides
+        // Parse Clerical Overrides
         const overMonths = document.getElementsByClassName('over-month');
         const overDrawn = document.getElementsByClassName('over-drawn');
-        const overDue = document.getElementsByClassName('over-due');
         let overrides = {};
         for (let i = 0; i < overMonths.length; i++) {
             if (overMonths[i].value) {
-                overrides[overMonths[i].value] = {};
                 let drawVal = parseFloat(overDrawn[i].value);
-                if (!isNaN(drawVal)) overrides[overMonths[i].value].drawn = drawVal;
-                let dueVal = parseFloat(overDue[i].value);
-                if (!isNaN(dueVal)) overrides[overMonths[i].value].due = dueVal;
+                if (!isNaN(drawVal)) overrides[overMonths[i].value] = drawVal;
             }
         }
 
         // Initialize 2016 Base Logic
-        const drawnBaseBP2016 = Math.ceil((baseBPApr17 / 1.03) / 10) * 10;
+        const drawnBaseBP2016 = Math.round((baseBPApr17 / 1.03) / 10) * 10;
         const dueBaseBP2016 = drawnBaseBP2016 + hcHike;
         
         let drawnBP = drawnBaseBP2016;
@@ -337,7 +336,7 @@
             let mm = String(date.getMonth() + 1).padStart(2, '0');
             let dateStr = `${yyyy}-${mm}`;
 
-            // --- 1. CORE INCREMENTS ---
+            // --- 1. CORE INCREMENTS (Standard & Event-Based) ---
             if (mm === "07" && dateStr !== "2016-07") { 
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
@@ -358,10 +357,17 @@
                 dueBP += asiHikeExtra; 
             }
 
-            // --- 2. APPLY MANUAL OVERRIDES ---
+            if (dateStr === specialIncDate) {
+                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
+                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
+            }
+
+            // --- 2. CLERICAL ERROR AUTO-SYNC ---
             if (overrides[dateStr]) {
-                if (overrides[dateStr].drawn) drawnBP = overrides[dateStr].drawn;
-                if (overrides[dateStr].due) dueBP = overrides[dateStr].due;
+                let oldDrawn = drawnBP;
+                drawnBP = overrides[dateStr];
+                let diff = drawnBP - oldDrawn;
+                dueBP += diff; // Instantly applies the exact same error to Due BP to preserve mathematical distance
             }
 
             // --- 3. ALLOWANCES & DEDUCTIONS ---
