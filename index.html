@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Pay Hike Arrear Calculator</title>
+    <title>Ultimate Grade Pay Arrear Calculator</title>
     <style>
+        /* Screen Styles */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             padding: 20px; 
@@ -58,9 +59,35 @@
             font-size: 18px; 
             padding: 15px; 
             background-color: #27ae60;
+            margin-bottom: 10px;
         }
         .btn-generate:hover {
             background-color: #219653;
+        }
+        .btn-print {
+            width: 100%;
+            font-size: 18px;
+            padding: 15px;
+            background-color: #e67e22;
+        }
+        .btn-print:hover {
+            background-color: #d35400;
+        }
+        .btn-remove {
+            background: #e74c3c;
+        }
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+        .dynamic-block { 
+            background: #ecf0f1; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            gap: 10px; 
+            align-items: flex-end; 
+            flex-wrap: wrap;
         }
         table { 
             width: 100%; 
@@ -79,45 +106,85 @@
             text-align: center; 
             position: sticky;
             top: 0;
+            z-index: 10;
         }
         .drawn-col { background-color: #fdf2e9; }
         .due-col { background-color: #e8f8f5; }
         .arrear-col { background-color: #ebdef0; font-weight: bold; }
         td:first-child { text-align: left; font-weight: bold; }
         .text-center { text-align: center; }
-        .table-container { overflow-x: auto; max-height: 800px; }
+        .table-container { overflow-x: auto; max-height: 700px; }
         .summary-box { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; font-size: 24px; margin-top: 20px;}
+        
+        /* Print Styles - Activates exactly when Exporting to PDF */
+        @media print {
+            body { font-size: 10px; padding: 0; margin: 0; background-color: #fff; }
+            .no-print { display: none !important; }
+            .container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
+            table { font-size: 10px; width: 100%; }
+            th, td { padding: 4px; border: 1px solid #000; }
+            th { background-color: #ddd !important; color: #000 !important; position: static; }
+            .drawn-col { background-color: #fafafa !important; }
+            .due-col { background-color: #f0f8ff !important; }
+            .arrear-col { background-color: #f5eef8 !important; }
+            .summary-box { background: #fff !important; color: #000 !important; border: 2px solid #000; margin-bottom: 15px;}
+            .table-container { max-height: none; overflow: visible; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Grade Pay Hike Arrear Calculator (HC to ASI)</h1>
-    
-    <div class="input-grid">
-        <div class="input-group">
-            <label>April 2017 Drawn BP (₹)</label>
-            <input type="number" id="apr2017BP" value="25640">
+    <div class="no-print">
+        <h1>Grade Pay Hike Arrear Calculator</h1>
+        
+        <div class="input-grid">
+            <div class="input-group">
+                <label>April 2017 Drawn BP (₹)</label>
+                <input type="number" id="apr2017BP" value="25640">
+            </div>
+            <div class="input-group">
+                <label>HC GP Hike Diff (₹)</label>
+                <input type="number" id="hcHike" value="600" title="Difference from 6200 to 6800">
+            </div>
+            <div class="input-group">
+                <label>ASI Extra GP Hike (₹)</label>
+                <input type="number" id="asiHikeExtra" value="600" title="Extra difference from 6800 to 7400">
+            </div>
+            <div class="input-group">
+                <label>MACP Date</label>
+                <input type="month" id="macpDate" value="2021-08">
+            </div>
+            <div class="input-group">
+                <label>ASI Promotion Date</label>
+                <input type="month" id="promoDate" value="2021-11">
+            </div>
         </div>
-        <div class="input-group">
-            <label>HC GP Hike Diff (₹)</label>
-            <input type="number" id="hcHike" value="600" title="Difference from 6200 to 6800">
+
+        <h2>Manual BP Overrides (For Clerical Errors & Medals)</h2>
+        <p style="font-size: 12px; color: #666;">Leave "Due BP" blank to maintain pure mathematical entitlement.</p>
+        <div id="overrideContainer">
+            </div>
+        <button onclick="addOverrideRow('', '', '')">+ Add BP Override</button>
+
+        <h2>HRA % Timeline (Post-July 2018)</h2>
+        <div id="hraContainer">
+            <div class="dynamic-block">
+                <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2018-07"></div>
+                <div class="input-group"><label>End Month</label><input type="month" class="hra-end" value="2026-06"></div>
+                <div class="input-group"><label>HRA %</label>
+                    <select class="hra-rate"><option value="10" selected>10%</option><option value="8">8%</option><option value="7">7%</option></select>
+                </div>
+            </div>
         </div>
-        <div class="input-group">
-            <label>ASI Extra GP Hike (₹)</label>
-            <input type="number" id="asiHikeExtra" value="600" title="Extra difference from 6800 to 7400">
-        </div>
-        <div class="input-group">
-            <label>MACP Date</label>
-            <input type="month" id="macpDate" value="2021-08">
-        </div>
-        <div class="input-group">
-            <label>ASI Promotion Date</label>
-            <input type="month" id="promoDate" value="2021-11">
-        </div>
+        <button onclick="addHraRow()">+ Add HRA Block</button>
+        
+        <hr style="margin: 20px 0; border: 1px solid #ddd;">
+        
+        <button class="btn-generate" onclick="generateSheet()">1. Calculate Arrears</button>
+        <button class="btn-print" onclick="window.print()">2. Export to PDF / Print</button>
     </div>
-    
-    <button class="btn-generate" onclick="generateSheet()">Calculate Arrears & Generate Sheet</button>
 
     <div id="totalArrearBox" class="summary-box" style="display:none;">
         Total Estimated Arrear: ₹<span id="totalArrearAmount">0</span>
@@ -131,7 +198,7 @@
                     <th rowspan="2">DA %</th>
                     <th colspan="3" class="drawn-col">ACTUAL DRAWN PAY (Old GP)</th>
                     <th colspan="3" class="due-col">ENTITLED DUE PAY (Hiked GP)</th>
-                    <th colspan="2" class="arrear-col">ARREAR CALCULATION</th>
+                    <th colspan="2" class="arrear-col">ARREAR SUMMARY</th>
                 </tr>
                 <tr>
                     <th class="drawn-col">Basic Pay</th>
@@ -140,7 +207,7 @@
                     <th class="due-col">Basic Pay</th>
                     <th class="due-col">Gross Pay</th>
                     <th class="due-col">Net Pay</th>
-                    <th class="arrear-col">Monthly Arrear</th>
+                    <th class="arrear-col">Monthly</th>
                     <th class="arrear-col">Running Total</th>
                 </tr>
             </thead>
@@ -151,6 +218,7 @@
 </div>
 
 <script>
+    // Universal Core Timelines
     const daTimeline = [
         { month: "2016-04", rate: 0.00 }, { month: "2016-07", rate: 0.02 }, { month: "2017-01", rate: 0.04 },
         { month: "2017-11", rate: 0.05 }, { month: "2018-05", rate: 0.07 }, { month: "2018-10", rate: 0.09 },
@@ -180,6 +248,53 @@
         return currentDA;
     }
 
+    // UI Add Row Functions
+    function addOverrideRow(month, drawnVal, dueVal) {
+        const row = document.createElement('div');
+        row.className = 'dynamic-block';
+        row.innerHTML = `
+            <div class="input-group"><label>Month/Year</label><input type="month" class="over-month" value="${month}"></div>
+            <div class="input-group"><label>Drawn BP Override</label><input type="number" class="over-drawn" value="${drawnVal}"></div>
+            <div class="input-group"><label>Due BP Override</label><input type="number" class="over-due" value="${dueVal}"></div>
+            <button class="btn-remove" onclick="this.parentElement.remove()">X</button>
+        `;
+        document.getElementById('overrideContainer').appendChild(row);
+    }
+
+    function addHraRow() {
+        const row = document.createElement('div');
+        row.className = 'dynamic-block';
+        row.innerHTML = `
+            <div class="input-group"><label>Start Month</label><input type="month" class="hra-start"></div>
+            <div class="input-group"><label>End Month</label><input type="month" class="hra-end"></div>
+            <div class="input-group"><label>HRA %</label>
+                <select class="hra-rate"><option value="10">10%</option><option value="8">8%</option><option value="7">7%</option></select>
+            </div>
+            <button class="btn-remove" onclick="this.parentElement.remove()">X</button>
+        `;
+        document.getElementById('hraContainer').appendChild(row);
+    }
+
+    // Pre-fill user-specific known anomalies perfectly mapping Drawn to Due calculations
+    window.onload = function() {
+        addOverrideRow('2018-07', 27210, ''); // July 18 Rounding Anomaly: Only Drawn was messed up. Due stays pure.
+        addOverrideRow('2018-11', 28030, 28710); // CM Medal: Real increment applied to BOTH scales.
+        addOverrideRow('2019-10', 28880, ''); // Oct 19 Dept Correction: Only Drawn needed fixing. Due stays pure.
+    };
+
+    function getHraRate(dateStr) {
+        const starts = document.getElementsByClassName('hra-start');
+        const ends = document.getElementsByClassName('hra-end');
+        const rates = document.getElementsByClassName('hra-rate');
+        
+        for (let i = 0; i < starts.length; i++) {
+            if (starts[i].value && ends[i].value && dateStr >= starts[i].value && dateStr <= ends[i].value) {
+                return parseFloat(rates[i].value) / 100;
+            }
+        }
+        return 0.10; 
+    }
+
     function generateSheet() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
@@ -190,7 +305,22 @@
         const macpDate = document.getElementById('macpDate').value;
         const promoDate = document.getElementById('promoDate').value;
 
-        // Base 2016 Calculations
+        // Parse Overrides
+        const overMonths = document.getElementsByClassName('over-month');
+        const overDrawn = document.getElementsByClassName('over-drawn');
+        const overDue = document.getElementsByClassName('over-due');
+        let overrides = {};
+        for (let i = 0; i < overMonths.length; i++) {
+            if (overMonths[i].value) {
+                overrides[overMonths[i].value] = {};
+                let drawVal = parseFloat(overDrawn[i].value);
+                if (!isNaN(drawVal)) overrides[overMonths[i].value].drawn = drawVal;
+                let dueVal = parseFloat(overDue[i].value);
+                if (!isNaN(dueVal)) overrides[overMonths[i].value].due = dueVal;
+            }
+        }
+
+        // Initialize 2016 Base Logic
         const drawnBaseBP2016 = Math.ceil((baseBPApr17 / 1.03) / 10) * 10;
         const dueBaseBP2016 = drawnBaseBP2016 + hcHike;
         
@@ -207,9 +337,7 @@
             let mm = String(date.getMonth() + 1).padStart(2, '0');
             let dateStr = `${yyyy}-${mm}`;
 
-            // --- 1. CORE BP INCREMENTS & OVERRIDES ---
-            
-            // Standard July Increment
+            // --- 1. CORE INCREMENTS ---
             if (mm === "07" && dateStr !== "2016-07") { 
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
@@ -219,40 +347,29 @@
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; 
             }
 
-            // Specific Anomaly Fixes for the "Drawn" side, mapped logically to "Due" side
-            if (dateStr === "2018-07") {
-                drawnBP = 27210; // The documented +10 error
-                dueBP += 10;     // Applying the exact same error bump to Due side to keep logic parallel
-            }
-            if (dateStr === "2018-11") {
-                drawnBP = 28030; // CM Medal Fixed
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; // CM Medal mathematically applied to Due
-            }
-            if (dateStr === "2019-10") {
-                drawnBP = 28880; // Dept Manual Correction
-                dueBP += 10;     // The correction was exactly +10 on the drawn scale
-            }
-
-            // MACP
             if (dateStr === macpDate) {
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
             }
 
-            // ASI Promotion
             if (dateStr === promoDate) {
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
-                dueBP += asiHikeExtra; // Apply the jump from 6800 to 7400 GP
+                dueBP += asiHikeExtra; 
             }
 
-            // --- 2. ALLOWANCES & DEDUCTIONS ---
-            
+            // --- 2. APPLY MANUAL OVERRIDES ---
+            if (overrides[dateStr]) {
+                if (overrides[dateStr].drawn) drawnBP = overrides[dateStr].drawn;
+                if (overrides[dateStr].due) dueBP = overrides[dateStr].due;
+            }
+
+            // --- 3. ALLOWANCES & DEDUCTIONS ---
             let daRate = getActiveDA(dateStr);
             let drawnDA = Math.round(drawnBP * daRate);
             let dueDA = Math.round(dueBP * daRate);
             
-            // Frozen HRA Rule (Same for both because it was a hardcoded Gov rule)
+            // Hardcoded Pre-2018 HRA Freeze Rules + Dynamic blocks
             let hraAmtDrawn = 0;
             let hraAmtDue = 0;
             if (dateStr >= "2016-04" && dateStr <= "2016-06") {
@@ -262,22 +379,20 @@
             } else if (dateStr >= "2017-07" && dateStr <= "2018-06") {
                 hraAmtDrawn = 1790; hraAmtDue = 1790;
             } else {
-                hraAmtDrawn = Math.round(drawnBP * 0.10);
-                hraAmtDue = Math.round(dueBP * 0.10);
+                let dynamicHRA = getHraRate(dateStr);
+                hraAmtDrawn = Math.round(drawnBP * dynamicHRA);
+                hraAmtDue = Math.round(dueBP * dynamicHRA);
             }
 
             let otherAmt = getOtherAllowance(dateStr);
             let mmlsay = getMMLSAY(dateStr);
             let otherDed = 408;
 
-            // Medical + CPA (5% Capped at 1700)
-            let drawnCPA = Math.min(Math.round(drawnBP * 0.05), 1700);
-            let drawnMedCPA = 600 + drawnCPA;
-            
-            let dueCPA = Math.min(Math.round(dueBP * 0.05), 1700);
-            let dueMedCPA = 600 + dueCPA;
+            // Medical + CPA (CPA is 5% Capped at 1700)
+            let drawnMedCPA = 600 + Math.min(Math.round(drawnBP * 0.05), 1700);
+            let dueMedCPA = 600 + Math.min(Math.round(dueBP * 0.05), 1700);
 
-            // --- 3. FINAL TOTALS ---
+            // --- 4. TOTALS ---
             let drawnGross = drawnBP + drawnDA + hraAmtDrawn + otherAmt + drawnMedCPA;
             let drawnNPS = Math.round((drawnBP + drawnDA) * 0.10);
             let drawnNet = drawnGross - drawnNPS - mmlsay - otherDed;
@@ -292,15 +407,12 @@
             let row = `<tr>
                 <td class="text-center">${date.toLocaleString('default', { month: 'short' })}-${yyyy}</td>
                 <td class="text-center">${(daRate * 100).toFixed(0)}%</td>
-                
                 <td class="drawn-col">${drawnBP.toFixed(2)}</td>
                 <td class="drawn-col">${drawnGross.toFixed(2)}</td>
                 <td class="drawn-col"><strong>${drawnNet.toFixed(2)}</strong></td>
-                
                 <td class="due-col">${dueBP.toFixed(2)}</td>
                 <td class="due-col">${dueGross.toFixed(2)}</td>
                 <td class="due-col"><strong>${dueNet.toFixed(2)}</strong></td>
-                
                 <td class="arrear-col text-center">₹${monthlyArrear.toFixed(2)}</td>
                 <td class="arrear-col text-center">₹${totalArrear.toFixed(2)}</td>
             </tr>`;
