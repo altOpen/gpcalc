@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ultimate Unbundled Arrear Calculator - 2001 Batch</title>
     <style>
-        /* Screen Styles */
+        /* Base Screen Styles */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             padding: 20px; 
@@ -21,6 +21,8 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
         }
         h1, h2 { color: #2c3e50; }
+        
+        /* Grid & Inputs */
         .input-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
@@ -37,11 +39,13 @@
             font-size: 13px; 
         }
         input, select, button { 
-            padding: 9px; 
+            padding: 10px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             font-size: 14px; 
         }
+        
+        /* Buttons */
         button { 
             background-color: #3498db; 
             color: white; 
@@ -51,34 +55,15 @@
             transition: background 0.3s; 
             margin-top: 10px; 
         }
-        button:hover { 
-            background-color: #2980b9; 
-        }
-        .btn-generate {
-            width: 100%; 
-            font-size: 18px; 
-            padding: 15px; 
-            background-color: #27ae60;
-            margin-bottom: 10px;
-        }
-        .btn-generate:hover {
-            background-color: #219653;
-        }
-        .btn-print {
-            width: 100%;
-            font-size: 18px;
-            padding: 15px;
-            background-color: #e67e22;
-        }
-        .btn-print:hover {
-            background-color: #d35400;
-        }
-        .btn-remove {
-            background: #e74c3c;
-        }
-        .btn-remove:hover {
-            background: #c0392b;
-        }
+        button:hover { background-color: #2980b9; }
+        .btn-generate { width: 100%; font-size: 18px; padding: 15px; background-color: #27ae60; margin-bottom: 10px; }
+        .btn-generate:hover { background-color: #219653; }
+        .btn-print { width: 100%; font-size: 18px; padding: 15px; background-color: #e67e22; }
+        .btn-print:hover { background-color: #d35400; }
+        .btn-remove { background: #e74c3c; padding: 10px 15px; }
+        .btn-remove:hover { background: #c0392b; }
+        
+        /* Dynamic Blocks */
         .dynamic-block { 
             background: #ecf0f1; 
             padding: 15px; 
@@ -101,6 +86,7 @@
         .table-container { 
             overflow-x: auto; 
             max-height: 750px; 
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
         table { 
             border-collapse: collapse; 
@@ -131,28 +117,74 @@
             z-index: 20;
             text-align: center;
         }
-        th:first-child {
-            z-index: 30; 
-        }
+        th:first-child { z-index: 30; }
 
         .drawn-col { background-color: #fdf2e9; color: #333; }
         .due-col { background-color: #e8f8f5; color: #333; }
         .arrear-col { background-color: #f4ecf7; font-weight: bold; color: #333; }
         .text-center { text-align: center; }
         
-        .summary-box { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; font-size: 24px; margin-top: 20px;}
+        /* Summaries */
+        .summary-box { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; font-size: 24px; margin-top: 20px; font-weight: bold;}
         .footnotes-box { margin-top: 20px; padding: 15px; background: #fff3e0; border-left: 4px solid #e67e22; display: none; }
         .footnotes-box h3 { margin-top: 0; color: #d35400; }
+        .mobile-scroll-hint { display: none; } /* Hidden on desktop */
+
+        /* ========================================= */
+        /* MOBILE OPTIMIZATION (Screens under 768px) */
+        /* ========================================= */
+        @media screen and (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            h1 { font-size: 22px; }
+            h2 { font-size: 18px; }
+            
+            /* Stack Grid for easy thumb tapping */
+            .input-grid { grid-template-columns: 1fr; gap: 10px; }
+            
+            /* Expand dynamic blocks to full width */
+            .dynamic-block { flex-direction: column; align-items: stretch; }
+            .dynamic-block .input-group { width: 100%; }
+            .btn-remove { margin-top: 10px; padding: 15px; width: 100%; } /* Big tap target to remove */
+            
+            /* Table adjustments for tiny screens */
+            table { font-size: 11px; }
+            th, td { padding: 5px 8px; }
+            
+            /* Show horizontal scroll hint */
+            .mobile-scroll-hint { 
+                display: block; 
+                background: #e1bee7; 
+                color: #4a235a; 
+                padding: 10px; 
+                text-align: center; 
+                border-radius: 4px; 
+                font-weight: bold; 
+                margin-top: 15px; 
+                animation: pulse 2s infinite;
+            }
+            
+            /* Drop shadow to clearly separate the sticky column from the sliding content */
+            td:first-child, th:first-child {
+                box-shadow: 3px 0px 6px rgba(0,0,0,0.2);
+            }
+        }
         
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
         /* Print Styles - Landscape & Micro Font */
         @media print {
             @page { size: landscape; margin: 5mm; }
             body { font-size: 8px; padding: 0; margin: 0; background-color: #fff; }
             .no-print { display: none !important; }
             .container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; }
-            table { font-size: 8px; width: 100%; white-space: normal; }
+            table { font-size: 8px; width: 100%; white-space: normal; border: 1px solid #000; }
             th, td { padding: 3px; border: 1px solid #000; }
-            td:first-child, th:first-child { background-color: #fff !important; color: #000 !important; position: static; }
+            td:first-child, th:first-child { background-color: #fff !important; color: #000 !important; position: static; box-shadow: none; }
             th { background-color: #ddd !important; color: #000 !important; position: static; }
             .drawn-col { background-color: #fafafa !important; }
             .due-col { background-color: #f0f8ff !important; }
@@ -230,6 +262,10 @@
         Total Estimated Arrear: ₹<span id="totalArrearAmount">0</span>
     </div>
 
+    <div class="no-print mobile-scroll-hint">
+        Swipe left/right to view the full forensic table ↔️
+    </div>
+
     <div class="table-container">
         <table id="resultTable">
             <thead>
@@ -298,7 +334,7 @@
         row.innerHTML = `
             <div class="input-group"><label>Month/Year</label><input type="month" class="over-month" value="${month}"></div>
             <div class="input-group"><label>Exact Drawn BP</label><input type="number" class="over-drawn" value="${drawnVal}"></div>
-            <button class="btn-remove" onclick="this.parentElement.remove()">X</button>
+            <button class="btn-remove" onclick="this.parentElement.remove()">X Remove</button>
             <div class="reason-display"></div>
         `;
         document.getElementById('overrideContainer').appendChild(row);
@@ -318,7 +354,7 @@
             <div class="input-group"><label>HRA %</label>
                 <select class="hra-rate"><option value="10">10%</option><option value="8">8%</option><option value="7">7%</option></select>
             </div>
-            <button class="btn-remove" onclick="this.parentElement.remove()">X</button>
+            <button class="btn-remove" onclick="this.parentElement.remove()">X Remove</button>
         `;
         document.getElementById('hraContainer').appendChild(row);
     }
