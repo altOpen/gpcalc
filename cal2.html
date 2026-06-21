@@ -3,57 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ultimate Unbundled Arrear Calculator - 2001 Batch</title>
+    <title>Universal Forensic Arrear Calculator</title>
     <style>
-        /* Base Screen Styles */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 20px; 
-            background-color: #f4f7f6; 
-            color: #333; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
         }
-        .container { 
-            max-width: 100%; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 25px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         h1, h2 { color: #2c3e50; }
-        
-        /* Grid & Inputs */
-        .input-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 20px; 
+
+        .toggle-container {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c5cae9;
         }
-        .input-group { 
-            display: flex; 
-            flex-direction: column; 
+        .toggle-container p.toggle-title { margin-top: 0; font-weight: bold; margin-bottom: 10px; color: #1a237e; }
+        .toggle-container label {
+            font-size: 15px;
+            margin-right: 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-weight: bold;
+            color: #1a237e;
         }
-        label { 
-            font-weight: bold; 
-            margin-bottom: 5px; 
-            font-size: 13px; 
+        .toggle-container input[type="radio"] { margin-right: 8px; transform: scale(1.2); }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        input, select, button { 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            font-size: 14px; 
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 13px; }
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
-        
-        /* Buttons */
-        button { 
-            background-color: #3498db; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: background 0.3s; 
-            margin-top: 10px; 
+        input:disabled { background: #eee; color: #777; }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 10px;
         }
         button:hover { background-color: #2980b9; }
         .btn-generate { width: 100%; font-size: 18px; padding: 15px; background-color: #27ae60; margin-bottom: 10px; }
@@ -62,16 +72,15 @@
         .btn-print:hover { background-color: #d35400; }
         .btn-remove { background: #e74c3c; padding: 10px 15px; }
         .btn-remove:hover { background: #c0392b; }
-        
-        /* Dynamic Blocks */
-        .dynamic-block { 
-            background: #ecf0f1; 
-            padding: 15px; 
-            border-radius: 4px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            gap: 10px; 
-            align-items: flex-end; 
+
+        .dynamic-block {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
             flex-wrap: wrap;
         }
         .reason-display {
@@ -81,38 +90,35 @@
             width: 100%;
             margin-top: 5px;
         }
-        
-        /* Table Styles */
-        .table-container { 
-            overflow-x: auto; 
-            max-height: 750px; 
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 750px;
+            -webkit-overflow-scrolling: touch;
         }
-        table { 
-            border-collapse: collapse; 
-            margin-top: 20px; 
-            font-size: 12px; 
-            white-space: nowrap; 
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+            white-space: nowrap;
         }
-        th, td { 
-            border: 1px solid #bdc3c7; 
-            padding: 6px 10px; 
-            text-align: right; 
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 6px 10px;
+            text-align: right;
         }
-        th { 
-            background-color: #2c3e50; 
-            color: white; 
-            text-align: center; 
+        th {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
             position: sticky;
             top: 0;
             z-index: 10;
         }
-        
-        /* Sticky First Column */
-        td:first-child, th:first-child { 
-            position: sticky; 
-            left: 0; 
-            background-color: #34495e; 
+        td:first-child, th:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #34495e;
             color: white;
             z-index: 20;
             text-align: center;
@@ -122,61 +128,38 @@
         .drawn-col { background-color: #fdf2e9; color: #333; }
         .due-col { background-color: #e8f8f5; color: #333; }
         .arrear-col { background-color: #f4ecf7; font-weight: bold; color: #333; }
-        .text-center { text-align: center; }
-        
-        /* Summaries */
+
         .summary-box { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; text-align: center; font-size: 24px; margin-top: 20px; font-weight: bold;}
         .footnotes-box { margin-top: 20px; padding: 15px; background: #fff3e0; border-left: 4px solid #e67e22; display: none; }
         .footnotes-box h3 { margin-top: 0; color: #d35400; }
-        .mobile-scroll-hint { display: none; } /* Hidden on desktop */
+        .mobile-scroll-hint { display: none; }
 
-        /* ========================================= */
-        /* MOBILE OPTIMIZATION (Screens under 768px) */
-        /* ========================================= */
         @media screen and (max-width: 768px) {
             body { padding: 10px; }
             .container { padding: 15px; }
             h1 { font-size: 22px; }
             h2 { font-size: 18px; }
-            
-            /* Stack Grid for easy thumb tapping */
             .input-grid { grid-template-columns: 1fr; gap: 10px; }
-            
-            /* Expand dynamic blocks to full width */
             .dynamic-block { flex-direction: column; align-items: stretch; }
             .dynamic-block .input-group { width: 100%; }
-            .btn-remove { margin-top: 10px; padding: 15px; width: 100%; } /* Big tap target to remove */
-            
-            /* Table adjustments for tiny screens */
+            .btn-remove { margin-top: 10px; padding: 15px; width: 100%; }
             table { font-size: 11px; }
             th, td { padding: 5px 8px; }
-            
-            /* Show horizontal scroll hint */
-            .mobile-scroll-hint { 
-                display: block; 
-                background: #e1bee7; 
-                color: #4a235a; 
-                padding: 10px; 
-                text-align: center; 
-                border-radius: 4px; 
-                font-weight: bold; 
-                margin-top: 15px; 
+            .mobile-scroll-hint {
+                display: block;
+                background: #e1bee7;
+                color: #4a235a;
+                padding: 10px;
+                text-align: center;
+                border-radius: 4px;
+                font-weight: bold;
+                margin-top: 15px;
                 animation: pulse 2s infinite;
             }
-            
-            /* Drop shadow to clearly separate the sticky column from the sliding content */
-            td:first-child, th:first-child {
-                box-shadow: 3px 0px 6px rgba(0,0,0,0.2);
-            }
+            td:first-child, th:first-child { box-shadow: 3px 0px 6px rgba(0,0,0,0.2); }
         }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-        /* Print Styles - Landscape & Micro Font */
         @media print {
             @page { size: landscape; margin: 5mm; }
             body { font-size: 8px; padding: 0; margin: 0; background-color: #fff; }
@@ -200,16 +183,40 @@
 
 <div class="container">
     <div class="no-print">
-        <h1>Forensic Arrear Calculator (2001 Batch)</h1>
+        <h1>Universal Forensic Arrear Calculator</h1>
         <p style="font-size: 13px; color: #555;">
-            <strong>Note:</strong> The starting Actual Drawn Grade Pay is permanently locked at <strong>₹6,200</strong>.
+            <strong>Note:</strong> The starting Actual Drawn Grade Pay is permanently locked at <strong>₹6,200</strong>
+            (₹6,400 after Level 1, if applicable). This tool does NOT predict 3% increments — every Drawn Basic Pay
+            month is taken as-entered. The engine only computes the Entitled "Due" side from the Grade Pay gap.
         </p>
-        
+
+        <div class="toggle-container">
+            <p class="toggle-title">When did you join the department?</p>
+            <label>
+                <input type="radio" name="joinEra" value="pre2016" checked onchange="toggleEraFields()">
+                Before April 2016 (e.g., 2001, 2009, 2014 batches)
+            </label>
+            <label>
+                <input type="radio" name="joinEra" value="post2016" onchange="toggleEraFields()">
+                After April 2016 (e.g., 2018, 2022, 2023 batches)
+            </label>
+        </div>
+
         <div class="input-grid">
-            <div class="input-group">
-                <label>April 2017 Drawn BP (₹)</label>
-                <input type="number" id="apr2017BP" value="25640">
+            <div class="input-group" id="pre2016Field">
+                <label>April 2017 Drawn Basic Pay (₹) — required anchor for pre-2016 joiners</label>
+                <input type="number" id="apr2017BP" placeholder="e.g., 25640">
             </div>
+
+            <div class="input-group" id="post2016DateField" style="display:none;">
+                <label>Date of Joining</label>
+                <input type="month" id="joinDate">
+            </div>
+            <div class="input-group" id="post2016BPField" style="display:none;">
+                <label>First Drawn Basic Pay (₹)</label>
+                <input type="number" id="firstDrawnBP" placeholder="e.g., 26410">
+            </div>
+
             <div class="input-group">
                 <label>HC Due GP (₹)</label>
                 <input type="number" id="hcGP" value="6800">
@@ -220,40 +227,50 @@
             </div>
             <div class="input-group">
                 <label>Level 1 Pass Date (Optional)</label>
-                <input type="month" id="lvl1Date" title="Leave blank if directly promoted to ASI from Level 2">
+                <input type="month" id="lvl1Date" title="Leave blank if directly promoted to ASI from Level 2. Bumps Drawn GP 6200→6400; Due GP stays at 6800.">
             </div>
             <div class="input-group">
-                <label>ASI Promotion Date</label>
-                <input type="month" id="promoDate" value="2021-11">
+                <label>ASI Promotion Date (Optional)</label>
+                <input type="month" id="promoDate" value="">
             </div>
             <div class="input-group">
-                <label>MACP Date (If Applicable)</label>
-                <input type="month" id="macpDate" value="2021-08">
+                <label>MACP Date (Optional)</label>
+                <input type="month" id="macpDate" value="">
             </div>
         </div>
 
         <h2>Clerical Anomalies & Manual Overrides</h2>
         <p style="font-size: 13px; color: #555;">
-            Enter the exact actual Drawn Basic Pay for any month where a clerical error occurred. The Smart Engine will detect any abrupt mathematical jumps and ask you for a justification.<br>
-            <span style="color: #d32f2f; font-weight: bold;">For maximum precision, please add as many verified historical Drawn Basic Pay records as possible to accurately account for any administrative inconsistencies.</span>
+            Enter the exact actual Drawn Basic Pay for any month where a clerical error, special increment, or
+            other anomaly occurred. The Smart Engine compares each entry against the previously entered/expected
+            value; if the jump isn't explained by a standard July increment, MACP, or promotion, it will ask you
+            for a justification, which is recorded as a footnote.<br>
+            <span style="color: #d32f2f; font-weight: bold;">For maximum precision, add as many verified historical
+            Drawn Basic Pay records as possible (ideally one entry per July) to accurately account for any
+            administrative inconsistencies.</span>
         </p>
         <div id="overrideContainer"></div>
         <button onclick="addOverrideRow('', '')">+ Add Clerical Fix</button>
 
         <h2>HRA % Timeline (Post-July 2018)</h2>
+        <p style="font-size: 12px; color: #666;">Pre-July 2018 HRA is hardcoded to the frozen government amounts. City Allowance (₹150) is only granted when HRA is 10%.</p>
         <div id="hraContainer">
             <div class="dynamic-block">
                 <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2018-07"></div>
                 <div class="input-group"><label>End Month</label><input type="month" class="hra-end" value="2026-06"></div>
                 <div class="input-group"><label>HRA %</label>
-                    <select class="hra-rate"><option value="10" selected>10%</option><option value="8">8%</option><option value="7">7%</option></select>
+                    <select class="hra-rate">
+                        <option value="10">10%</option>
+                        <option value="8" selected>8%</option>
+                        <option value="7">7%</option>
+                    </select>
                 </div>
             </div>
         </div>
         <button onclick="addHraRow()">+ Add HRA Block</button>
-        
+
         <hr style="margin: 20px 0; border: 1px solid #ddd;">
-        
+
         <button class="btn-generate" onclick="generateSheet()">1. Calculate Forensic Arrears</button>
         <button class="btn-print" onclick="window.print()">2. Export to PDF / Print (Landscape)</button>
     </div>
@@ -292,13 +309,14 @@
 </div>
 
 <script>
-    // Global Justification Store for Smart Engine
-    window.justifications = {
-        '2018-07': "Departmental Rounding Error",
-        '2019-10': "Departmental Manual Correction"
-    };
+    // ---------------------------------------------------------------
+    // Justification store for the Smart Validation Engine
+    // ---------------------------------------------------------------
+    window.justifications = {};
 
-    // Master Timelines
+    // ---------------------------------------------------------------
+    // Master timelines (universal — apply to everyone regardless of batch)
+    // ---------------------------------------------------------------
     const daTimeline = [
         { month: "2016-04", rate: 0.00 }, { month: "2016-07", rate: 0.02 }, { month: "2017-01", rate: 0.04 },
         { month: "2017-11", rate: 0.05 }, { month: "2018-05", rate: 0.07 }, { month: "2018-10", rate: 0.09 },
@@ -328,6 +346,25 @@
         return rate;
     }
 
+    // ---------------------------------------------------------------
+    // Toggle: pre-2016 vs post-2016 joiners
+    // ---------------------------------------------------------------
+    function toggleEraFields() {
+        const era = document.querySelector('input[name="joinEra"]:checked').value;
+        if (era === 'pre2016') {
+            document.getElementById('pre2016Field').style.display = 'flex';
+            document.getElementById('post2016DateField').style.display = 'none';
+            document.getElementById('post2016BPField').style.display = 'none';
+        } else {
+            document.getElementById('pre2016Field').style.display = 'none';
+            document.getElementById('post2016DateField').style.display = 'flex';
+            document.getElementById('post2016BPField').style.display = 'flex';
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Dynamic UI rows
+    // ---------------------------------------------------------------
     function addOverrideRow(month, drawnVal) {
         const row = document.createElement('div');
         row.className = 'dynamic-block';
@@ -338,8 +375,7 @@
             <div class="reason-display"></div>
         `;
         document.getElementById('overrideContainer').appendChild(row);
-        
-        // Auto-fill existing justification UI if present
+
         if (month && window.justifications[month]) {
             row.querySelector('.reason-display').innerText = "Justification: " + window.justifications[month];
         }
@@ -352,17 +388,16 @@
             <div class="input-group"><label>Start Month</label><input type="month" class="hra-start"></div>
             <div class="input-group"><label>End Month</label><input type="month" class="hra-end"></div>
             <div class="input-group"><label>HRA %</label>
-                <select class="hra-rate"><option value="10">10%</option><option value="8">8%</option><option value="7">7%</option></select>
+                <select class="hra-rate">
+                    <option value="10">10%</option>
+                    <option value="8" selected>8%</option>
+                    <option value="7">7%</option>
+                </select>
             </div>
             <button class="btn-remove" onclick="this.parentElement.remove()">X Remove</button>
         `;
         document.getElementById('hraContainer').appendChild(row);
     }
-
-    window.onload = function() {
-        addOverrideRow('2018-07', 27210); 
-        addOverrideRow('2019-10', 28880); 
-    };
 
     function getHraRate(dateStr) {
         const starts = document.getElementsByClassName('hra-start');
@@ -373,127 +408,161 @@
                 return parseFloat(rates[i].value) / 100;
             }
         }
-        return 0.10; 
+        return 0.08; // default 8%
     }
 
+    window.onload = function() {
+        alert("INSTRUCTIONS FOR ACCURACY:\n\n1. Select whether you joined before or after April 2016.\n\n2. For best accuracy, use '+ Add Clerical Fix' to enter your verified Drawn Basic Pay for every July (and any month with a clerical correction or special increment).\n\n3. Verify your HRA % before proceeding (default is 8%).\n\n4. Leave Level 1 / Promotion / MACP dates blank if not applicable — leaving them blank avoids accidentally applying an increment that didn't happen.");
+    };
+
+    // ---------------------------------------------------------------
+    // Core calculation engine
+    // ---------------------------------------------------------------
     function generateSheet() {
         const tbody = document.getElementById('tableBody');
         const footnotesList = document.getElementById('footnotesList');
         tbody.innerHTML = '';
         footnotesList.innerHTML = '';
         document.getElementById('footnotesBox').style.display = 'none';
-        
-        const baseBPApr17 = parseFloat(document.getElementById('apr2017BP').value);
+
+        const era = document.querySelector('input[name="joinEra"]:checked').value;
         const hcDueGP = parseFloat(document.getElementById('hcGP').value);
         const asiDueGP = parseFloat(document.getElementById('asiGP').value);
-        
-        const macpDate = document.getElementById('macpDate').value;
         const promoDate = document.getElementById('promoDate').value;
+        const macpDate = document.getElementById('macpDate').value;
         const lvl1Date = document.getElementById('lvl1Date').value;
 
-        // Parse Clerical Overrides
+        // ---- Parse Clerical Overrides ----
         const overBlocks = document.getElementsByClassName('dynamic-block');
         let overrides = {};
         for (let i = 0; i < overBlocks.length; i++) {
             let monthInput = overBlocks[i].querySelector('.over-month');
             let drawnInput = overBlocks[i].querySelector('.over-drawn');
-            if (monthInput && monthInput.value && drawnInput && drawnInput.value) {
+            if (monthInput && monthInput.value && drawnInput && drawnInput.value !== "") {
                 let drawVal = parseFloat(drawnInput.value);
                 if (!isNaN(drawVal)) {
-                    overrides[monthInput.value] = {
-                        val: drawVal,
-                        uiBlock: overBlocks[i]
-                    };
+                    overrides[monthInput.value] = { val: drawVal, uiBlock: overBlocks[i] };
                 }
             }
         }
 
-        const drawnBaseBP2016 = Math.round((baseBPApr17 / 1.03) / 10) * 10;
-        
-        let drawnBP = drawnBaseBP2016;
-        let drawnGP = 6200; // Locked Start
-        
+        // ---- Determine start date + initial BP/GP based on era ----
+        let startYear, startMonth, drawnBP, dueBP;
+        let drawnGP = 6200;
         let dueGP = hcDueGP;
-        let dueBP = drawnBP + (dueGP - drawnGP); 
-        
+
+        if (era === 'pre2016') {
+            const baseBPApr17 = parseFloat(document.getElementById('apr2017BP').value);
+            if (isNaN(baseBPApr17)) { alert("Please enter your April 2017 Drawn Basic Pay."); return; }
+            startYear = 2016;
+            startMonth = 4;
+            // Reverse-engineer the pre-July-2016 starting BP from the April 2017 anchor
+            drawnBP = Math.round((baseBPApr17 / 1.03) / 10) * 10;
+            dueBP = drawnBP + (dueGP - drawnGP);
+        } else {
+            const joinDateStr = document.getElementById('joinDate').value;
+            const firstDrawnBP = parseFloat(document.getElementById('firstDrawnBP').value);
+            if (!joinDateStr || isNaN(firstDrawnBP)) {
+                alert("Please enter your Date of Joining and First Drawn Basic Pay.");
+                return;
+            }
+            let parts = joinDateStr.split('-');
+            startYear = parseInt(parts[0]);
+            startMonth = parseInt(parts[1]);
+            if (startYear < 2016 || (startYear === 2016 && startMonth < 4)) {
+                alert("For join dates before April 2016, please select the 'Before April 2016' option above instead.");
+                return;
+            }
+            drawnBP = firstDrawnBP;
+            dueBP = drawnBP + (dueGP - drawnGP);
+        }
+
+        const dateStrStartCheck = `${startYear}-${String(startMonth).padStart(2, '0')}`;
+
+        // Calculate how many months to loop, ending June 2026
+        const endYear = 2026, endMonth = 6;
+        const totalLoops = ((endYear - startYear) * 12) + (endMonth - startMonth) + 1;
+        if (totalLoops <= 0) { alert("Your join date is after the calculation end date (June 2026)."); return; }
+
         let totalArrear = 0;
         let activeFootnotes = {};
 
-        for (let i = 0; i < 123; i++) { 
-            let date = new Date(2016, 3 + i);
+        for (let i = 0; i < totalLoops; i++) {
+            let date = new Date(startYear, startMonth - 1 + i);
             let yyyy = date.getFullYear();
             let mm = String(date.getMonth() + 1).padStart(2, '0');
             let dateStr = `${yyyy}-${mm}`;
             let bpAsterisk = "";
 
-            // --- 1. CORE INCREMENTS ---
-            if (dateStr === "2016-07") {
-                drawnBP = baseBPApr17;
+            // --- 1. STANDARD JULY INCREMENT (only auto-applied if NOT overridden this month) ---
+            // Using else if prevents compounding overlap. The 2016-07 re-anchor blocks the standard loop.
+            if (era === 'pre2016' && dateStr === "2016-07") {
+                // Re-anchor exactly to the user's verified April 2017 BP figure
+                drawnBP = parseFloat(document.getElementById('apr2017BP').value);
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; 
-            } else if (mm === "07") { 
+            } else if (mm === "07" && dateStr !== dateStrStartCheck) { 
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
             }
 
-            if (dateStr === macpDate) {
+            // --- 2. MACP ---
+            if (macpDate && dateStr === macpDate) {
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
             }
 
-            // --- 2. LEVEL 1 & PROMOTION LOGIC ---
-            if (dateStr === lvl1Date) {
+            // --- 3. LEVEL 1 (6200 -> 6400 Drawn GP only; Due GP unaffected, stays at hcDueGP) ---
+            if (lvl1Date && dateStr === lvl1Date) {
                 drawnGP = 6400;
-                drawnBP += 200; // Gap logically shrinks by 200
-                // Due side ignores this entirely
+                drawnBP += 200; // gap to Due narrows by 200; Due side does not change
             }
 
-            if (dateStr >= promoDate) {
-                dueGP = asiDueGP; 
+            // --- 4. ASI PROMOTION ---
+            if (promoDate && dateStr >= promoDate) {
+                dueGP = asiDueGP;
             }
-
-            if (dateStr === promoDate) {
-                // Both get normal promotion 3% increment
+            if (promoDate && dateStr === promoDate) {
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
-                
-                // Due gets the massive GP jump. Drawn stays at whatever it was (6200 or 6400).
-                dueBP += (asiDueGP - hcDueGP); 
+                dueBP += (asiDueGP - hcDueGP); // remaining GP gap added once, not double-counted
             }
 
-            // --- 3. SMART VALIDATION OVERRIDE ENGINE ---
+            // --- 5. SMART VALIDATION OVERRIDE ENGINE ---
             if (overrides[dateStr]) {
                 let expectedDrawn = drawnBP;
                 let enteredDrawn = overrides[dateStr].val;
-                
+
                 if (expectedDrawn !== enteredDrawn) {
-                    // Check if we need to prompt the user
                     if (!window.justifications[dateStr]) {
-                        let reason = window.prompt(`ABRUPT SALARY JUMP DETECTED: ${dateStr}\n\nMathematical Expected BP: ₹${expectedDrawn}\nManually Entered BP: ₹${enteredDrawn}\n\nPlease provide a short justification (e.g., 'Clerical Fix', 'Medal'):`);
-                        window.justifications[dateStr] = reason || "Unspecified Manual Override";
-                        
-                        // Update the UI reason display
+                        let reason = window.prompt(
+                            `ABRUPT SALARY JUMP DETECTED: ${dateStr}\n\n` +
+                            `Mathematically expected Drawn BP: ₹${expectedDrawn}\n` +
+                            `Manually entered Drawn BP: ₹${enteredDrawn}\n\n` +
+                            `This isn't explained by a standard July increment, MACP, Level 1, or ASI promotion. ` +
+                            `Please provide a short justification (e.g., "Clerical correction", "Departmental rounding error"):`
+                        );
+                        window.justifications[dateStr] = reason || "Unspecified manual override";
                         let reasonDisplay = overrides[dateStr].uiBlock.querySelector('.reason-display');
-                        if(reasonDisplay) reasonDisplay.innerText = "Justification: " + window.justifications[dateStr];
+                        if (reasonDisplay) reasonDisplay.innerText = "Justification: " + window.justifications[dateStr];
                     }
-                    
                     drawnBP = enteredDrawn;
-                    dueBP += (drawnBP - expectedDrawn); // Sync mathematical distance
+                    dueBP += (drawnBP - expectedDrawn); // preserve the pure GP-gap distance
                     bpAsterisk = "*";
                     activeFootnotes[dateStr] = window.justifications[dateStr];
                 }
             }
 
-            // Pay Band
+            // --- Pay Band derivation ---
             let drawnPB = drawnBP - drawnGP;
             let duePB = dueBP - dueGP;
 
-            // --- 4. DEDUCTIONS & ALLOWANCES ---
+            // --- DA ---
             let daRate = getActiveDA(dateStr);
             let drawnDA = Math.round(drawnBP * daRate);
             let dueDA = Math.round(dueBP * daRate);
-            
-            // HRA
-            let hraAmtDrawn = 0; let hraAmtDue = 0;
+
+            // --- HRA (hardcoded frozen pre-July-2018 steps, then dynamic blocks) ---
+            let hraAmtDrawn = 0, hraAmtDue = 0;
             let dynamicHRA = getHraRate(dateStr);
             if (dateStr >= "2016-04" && dateStr <= "2016-06") {
                 hraAmtDrawn = 1680; hraAmtDue = 1680;
@@ -506,23 +575,23 @@
                 hraAmtDue = Math.round(dueBP * dynamicHRA);
             }
 
-            // Ration, KMA, City
+            // --- Ration / KMA / City ---
             let totalOtherBase = getBaseOtherAllowance(dateStr);
             let kma = 350;
-            let city = (dynamicHRA >= 0.10 || dateStr < "2018-07") ? 150 : 0; 
-            let ration = totalOtherBase - kma - city; 
+            let city = (dynamicHRA >= 0.10 || dateStr < "2018-07") ? 150 : 0;
+            let ration = totalOtherBase - kma - city;
 
-            // Medical + CPA (CPA is 5% Capped at 1700)
+            // --- Medical + CPA ---
             let med = 600;
             let drawnCPA = Math.min(Math.round(drawnBP * 0.05), 1700);
             let dueCPA = Math.min(Math.round(dueBP * 0.05), 1700);
 
-            // Deductions
+            // --- Deductions ---
             let mmlsay = getMMLSAY(dateStr);
             let gis = 200;
             let ptax = 208;
 
-            // --- 5. TOTALS ---
+            // --- Totals ---
             let drawnGross = drawnBP + drawnDA + hraAmtDrawn + ration + kma + city + med + drawnCPA;
             let drawnNPS = Math.round((drawnBP + drawnDA) * 0.10);
             let drawnNet = drawnGross - drawnNPS - mmlsay - gis - ptax;
@@ -536,7 +605,6 @@
 
             let row = `<tr>
                 <td style="font-weight:bold;">${date.toLocaleString('default', { month: 'short' })}-${yyyy}</td>
-                
                 <td class="drawn-col">${drawnPB.toFixed(0)}</td>
                 <td class="drawn-col">${drawnGP.toFixed(0)}</td>
                 <td class="drawn-col" style="font-weight:bold;">${drawnBP.toFixed(0)}${bpAsterisk}</td>
@@ -553,7 +621,6 @@
                 <td class="drawn-col">${ptax.toFixed(0)}</td>
                 <td class="drawn-col">${mmlsay.toFixed(0)}</td>
                 <td class="drawn-col" style="font-weight:bold; color:#c0392b;">${drawnNet.toFixed(0)}</td>
-                
                 <td class="due-col">${duePB.toFixed(0)}</td>
                 <td class="due-col">${dueGP.toFixed(0)}</td>
                 <td class="due-col" style="font-weight:bold;">${dueBP.toFixed(0)}${bpAsterisk}</td>
@@ -570,15 +637,12 @@
                 <td class="due-col">${ptax.toFixed(0)}</td>
                 <td class="due-col">${mmlsay.toFixed(0)}</td>
                 <td class="due-col" style="font-weight:bold; color:#27ae60;">${dueNet.toFixed(0)}</td>
-                
                 <td class="arrear-col">₹${monthlyArrear.toFixed(0)}</td>
                 <td class="arrear-col">₹${totalArrear.toFixed(0)}</td>
             </tr>`;
-            
             tbody.innerHTML += row;
         }
 
-        // Render Footnotes
         if (Object.keys(activeFootnotes).length > 0) {
             document.getElementById('footnotesBox').style.display = 'block';
             for (let month in activeFootnotes) {
