@@ -178,7 +178,7 @@
         <div class="input-grid">
             <div class="input-group" id="pre2016Field">
                 <label>April 2017 Drawn Basic Pay (₹)</label>
-                <input type="number" id="apr2017BP" value="25640">
+                <input type="number" id="apr2017BP">
             </div>
 
             <div class="input-group" id="post2016DateField" style="display:none;">
@@ -200,11 +200,11 @@
             </div>
             <div class="input-group">
                 <label>ASI Promotion Date (Optional)</label>
-                <input type="month" id="promoDate" value="2021-11">
+                <input type="month" id="promoDate" value="">
             </div>
             <div class="input-group">
                 <label>MACP Date (Optional)</label>
-                <input type="month" id="macpDate" value="2021-08">
+                <input type="month" id="macpDate" value="">
             </div>
         </div>
 
@@ -221,7 +221,11 @@
                 <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2018-07"></div>
                 <div class="input-group"><label>End Month</label><input type="month" class="hra-end" value="2026-06"></div>
                 <div class="input-group"><label>HRA %</label>
-                    <select class="hra-rate"><option value="10" selected>10%</option><option value="8">8%</option><option value="7">7%</option></select>
+                    <select class="hra-rate">
+                        <option value="10">10%</option>
+                        <option value="8" selected>8%</option>
+                        <option value="7">7%</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -267,6 +271,10 @@
 </div>
 
 <script>
+    window.onload = function() {
+        alert("Important Note for Accuracy:\n\n1. For the most precise calculation, enter your verified July Basic Pay year-by-year using the '+ Add Clerical Fix' button.\n\n2. Please double-check your HRA % before proceeding (Default is 8% as most personnel are outside Guwahati).");
+    };
+
     window.justifications = {};
 
     function toggleEraFields() {
@@ -334,7 +342,11 @@
             <div class="input-group"><label>Start Month</label><input type="month" class="hra-start"></div>
             <div class="input-group"><label>End Month</label><input type="month" class="hra-end"></div>
             <div class="input-group"><label>HRA %</label>
-                <select class="hra-rate"><option value="10">10%</option><option value="8">8%</option><option value="7">7%</option></select>
+                <select class="hra-rate">
+                    <option value="10">10%</option>
+                    <option value="8" selected>8%</option>
+                    <option value="7">7%</option>
+                </select>
             </div>
             <button class="btn-remove" onclick="this.parentElement.remove()">X Remove</button>
         `;
@@ -350,7 +362,7 @@
                 return parseFloat(rates[i].value) / 100;
             }
         }
-        return 0.10; 
+        return 0.08; // Default is now 8%
     }
 
     function generateSheet() {
@@ -391,8 +403,8 @@
             if(isNaN(baseBPApr17)) { alert("Please enter April 2017 BP."); return; }
             startYear = 2016;
             startMonth = 4;
-            drawnBP = Math.round((baseBPApr17 / 1.03) / 10) * 10; // Reverse engineer 2016
-            dueBP = drawnBP + (dueGP - drawnGP); // Initial 600 gap
+            drawnBP = Math.round((baseBPApr17 / 1.03) / 10) * 10; 
+            dueBP = drawnBP + (dueGP - drawnGP); 
         } else {
             const joinDateStr = document.getElementById('joinDate').value;
             const firstDrawnBP = parseFloat(document.getElementById('firstDrawnBP').value);
@@ -408,10 +420,9 @@
             }
             
             drawnBP = firstDrawnBP;
-            dueBP = drawnBP + (dueGP - drawnGP); // Instantly assigns the +600 entitlement gap from Day 1
+            dueBP = drawnBP + (dueGP - drawnGP); 
         }
 
-        // Calculate total loops to run exactly up to June 2026
         const endYear = 2026;
         const endMonth = 6;
         const totalLoops = ((endYear - startYear) * 12) + (endMonth - startMonth) + 1;
@@ -426,13 +437,11 @@
             let bpAsterisk = "";
 
             // --- 1. CORE INCREMENTS ---
-            // Only apply standard July increment if it's not the exact month they joined (e.g. joined in July 2018)
             if (mm === "07" && dateStr !== dateStrStartCheck) { 
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
             }
             
-            // Special Pre-2016 rule: Jul 2016 increment must happen, and then drawn BP artificially matches the input BP
             if (era === 'pre2016' && dateStr === "2016-07") {
                 drawnBP = parseFloat(document.getElementById('apr2017BP').value);
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; 
@@ -450,7 +459,7 @@
             if (promoDate && dateStr === promoDate) {
                 drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
-                dueBP += (asiDueGP - hcDueGP); // Add the remaining Grade Pay jump strictly to Entitled side
+                dueBP += (asiDueGP - hcDueGP); 
             }
 
             // --- 2. SMART VALIDATION OVERRIDE ENGINE ---
@@ -466,7 +475,7 @@
                         if(reasonDisplay) reasonDisplay.innerText = "Justification: " + window.justifications[dateStr];
                     }
                     drawnBP = enteredDrawn;
-                    dueBP += (drawnBP - expectedDrawn); // Sync mathematical distance
+                    dueBP += (drawnBP - expectedDrawn); 
                     bpAsterisk = "*";
                     activeFootnotes[dateStr] = window.justifications[dateStr];
                 }
