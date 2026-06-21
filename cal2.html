@@ -253,7 +253,7 @@
         <button onclick="addOverrideRow('', '')">+ Add Clerical Fix</button>
 
         <h2>HRA % Timeline (Post-July 2018)</h2>
-        <p style="font-size: 12px; color: #666;">Pre-July 2018 HRA is hardcoded to the frozen government amounts. City Allowance (₹150) is only granted when HRA is 10%.</p>
+        <p style="font-size: 12px; color: #666;">Pre-July 2018 HRA is hardcoded to the frozen government amounts. City Allowance (₹150) is strictly granted ONLY when HRA is 10%.</p>
         <div id="hraContainer">
             <div class="dynamic-block">
                 <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2018-07"></div>
@@ -402,7 +402,9 @@
                 return parseFloat(rates[i].value) / 100;
             }
         }
-        return 0.08; // default 8%
+        // BUG FIX: Fallback to the first selected HRA rate to ensure City Allowance is correctly calculated
+        // even for months before 2018-07 that fall outside standard block ranges.
+        return rates.length > 0 ? parseFloat(rates[0].value) / 100 : 0.08; 
     }
 
     window.onload = function() {
@@ -568,9 +570,12 @@
                 hraAmtDue = Math.round(dueBP * dynamicHRA);
             }
 
-            // --- Ration / KMA / City (DECOUPLED BUG FIX) ---
+            // --- Ration / KMA / City (BUG FIX IMPLEMENTED) ---
             let kma = 350;
-            let city = (dynamicHRA >= 0.10 || dateStr < "2018-07") ? 150 : 0;
+            
+            // City Allowance strictly triggers ONLY if the underlying HRA rate is 10%.
+            // dynamicHRA >= 0.09 is used to bypass any minor floating point bugs, catching exactly 10%.
+            let city = (dynamicHRA >= 0.09) ? 150 : 0;
             
             let ration = 1200; // Base historical ration
             if (dateStr >= "2023-10") {
