@@ -186,7 +186,7 @@
         <h1>Universal Forensic Arrear Calculator</h1>
         <p style="font-size: 13px; color: #555;">
             <strong>Note:</strong> The starting Actual Drawn Grade Pay is permanently locked at <strong>₹6,200</strong>
-            (₹6,400 after Level 1, if applicable). This tool does NOT predict 3% increments — every Drawn Basic Pay
+            (₹6,400 after Level 1, if applicable). This tool does NOT predict increments unnecessarily — every Drawn Basic Pay
             month is taken as-entered. The engine only computes the Entitled "Due" side from the Grade Pay gap.
         </p>
 
@@ -209,11 +209,11 @@
             </div>
 
             <div class="input-group" id="post2016DateField" style="display:none;">
-                <label>Date of Joining</label>
+                <label>Qualified Month as HC</label>
                 <input type="month" id="joinDate">
             </div>
             <div class="input-group" id="post2016BPField" style="display:none;">
-                <label>First Drawn Basic Pay (₹)</label>
+                <label>First Basic Pay as HC (₹)</label>
                 <input type="number" id="firstDrawnBP" placeholder="e.g., 26410">
             </div>
 
@@ -402,7 +402,7 @@
                 return parseFloat(rates[i].value) / 100;
             }
         }
-        // BUG FIX: Fallback to the first selected HRA rate to ensure City Allowance is correctly calculated
+        // Fallback to the first selected HRA rate to ensure City Allowance is correctly calculated
         // even for months before 2018-07 that fall outside standard block ranges.
         return rates.length > 0 ? parseFloat(rates[0].value) / 100 : 0.08; 
     }
@@ -494,16 +494,16 @@
             if (era === 'pre2016' && dateStr === "2016-07") {
                 // Re-anchor exactly to the user's verified April 2017 BP figure
                 drawnBP = parseFloat(document.getElementById('apr2017BP').value);
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; 
+                dueBP = Math.round((dueBP * 1.03) / 10) * 10; 
             } else if (mm === "07" && dateStr !== dateStrStartCheck) { 
-                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
+                drawnBP = Math.round((drawnBP * 1.03) / 10) * 10;
+                dueBP = Math.round((dueBP * 1.03) / 10) * 10;
             }
 
             // --- 2. MACP ---
             if (macpDate && dateStr === macpDate) {
-                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
+                drawnBP = Math.round((drawnBP * 1.03) / 10) * 10;
+                dueBP = Math.round((dueBP * 1.03) / 10) * 10;
             }
 
             // --- 3. LEVEL 1 (6200 -> 6400 Drawn GP only; Due GP unaffected, stays at hcDueGP) ---
@@ -517,8 +517,8 @@
                 dueGP = asiDueGP;
             }
             if (promoDate && dateStr === promoDate) {
-                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
+                drawnBP = Math.round((drawnBP * 1.03) / 10) * 10;
+                dueBP = Math.round((dueBP * 1.03) / 10) * 10;
                 dueBP += (asiDueGP - hcDueGP); // remaining GP gap added once, not double-counted
             }
 
@@ -570,7 +570,7 @@
                 hraAmtDue = Math.round(dueBP * dynamicHRA);
             }
 
-            // --- Ration / KMA / City (BUG FIX IMPLEMENTED) ---
+            // --- Ration / KMA / City ---
             let kma = 350;
             
             // City Allowance strictly triggers ONLY if the underlying HRA rate is 10%.
