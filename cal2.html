@@ -326,12 +326,6 @@
         { month: "2024-11", rate: 0.53 }, { month: "2025-03", rate: 0.55 }, { month: "2025-09", rate: 0.58 }
     ];
 
-    const getBaseOtherAllowance = (dateStr) => {
-        if (dateStr >= "2023-10") return 3000;
-        if (dateStr >= "2020-10") return 2500;
-        return 1700;
-    };
-
     const getMMLSAY = (dateStr) => {
         if (dateStr === "2024-01") return 450;
         if (dateStr >= "2024-02") return 225;
@@ -495,7 +489,6 @@
             let bpAsterisk = "";
 
             // --- 1. STANDARD JULY INCREMENT (only auto-applied if NOT overridden this month) ---
-            // Using else if prevents compounding overlap. The 2016-07 re-anchor blocks the standard loop.
             if (era === 'pre2016' && dateStr === "2016-07") {
                 // Re-anchor exactly to the user's verified April 2017 BP figure
                 drawnBP = parseFloat(document.getElementById('apr2017BP').value);
@@ -575,11 +568,16 @@
                 hraAmtDue = Math.round(dueBP * dynamicHRA);
             }
 
-            // --- Ration / KMA / City ---
-            let totalOtherBase = getBaseOtherAllowance(dateStr);
+            // --- Ration / KMA / City (DECOUPLED BUG FIX) ---
             let kma = 350;
             let city = (dynamicHRA >= 0.10 || dateStr < "2018-07") ? 150 : 0;
-            let ration = totalOtherBase - kma - city;
+            
+            let ration = 1200; // Base historical ration
+            if (dateStr >= "2023-10") {
+                ration = 2500;
+            } else if (dateStr >= "2020-10") {
+                ration = 2000;
+            }
 
             // --- Medical + CPA ---
             let med = 600;
