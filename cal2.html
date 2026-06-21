@@ -427,13 +427,12 @@
             let bpAsterisk = "";
 
             // --- 1. CORE INCREMENTS ---
-            if (mm === "07" && dateStr !== "2016-07") { 
-                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
-                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
-            }
             if (dateStr === "2016-07") {
                 drawnBP = baseBPApr17;
                 dueBP = Math.ceil((dueBP * 1.03) / 10) * 10; 
+            } else if (mm === "07") { 
+                drawnBP = Math.ceil((drawnBP * 1.03) / 10) * 10;
+                dueBP = Math.ceil((dueBP * 1.03) / 10) * 10;
             }
 
             if (dateStr === macpDate) {
