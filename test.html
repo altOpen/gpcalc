@@ -183,10 +183,10 @@
 
 <div class="container">
     <div class="no-print">
-        <h1>Universal Forensic Arrear Calculator</h1>
+        <h1>Arrear Calculator</h1>
         <p style="font-size: 13px; color: #555;">
             <strong>Note:</strong> The starting Actual Drawn Grade Pay is permanently locked at <strong>₹6,200</strong>
-            (₹6,400 after Level 1, if applicable). This tool does NOT predict increments unnecessarily — every Drawn Basic Pay
+            (₹6,400 after Level 1, if applicable). This tool does NOT predict 3% increments — every Drawn Basic Pay
             month is taken as-entered. The engine only computes the Entitled "Due" side from the Grade Pay gap.
         </p>
 
@@ -252,11 +252,11 @@
         <div id="overrideContainer"></div>
         <button onclick="addOverrideRow('', '')">+ Add More Basic Pay from PaySlip</button>
 
-        <h2>HRA % Timeline (Post-July 2018)</h2>
-        <p style="font-size: 12px; color: #666;">Pre-July 2018 HRA is hardcoded to the frozen government amounts. City Allowance (₹150) is strictly granted ONLY when HRA is 10%.</p>
+        <h2>HRA % Timeline</h2>
+        <p style="font-size: 12px; color: #666;">City Allowance (₹150) is strictly granted ONLY when HRA is 10%.</p>
         <div id="hraContainer">
             <div class="dynamic-block">
-                <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2018-07"></div>
+                <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2016-04"></div>
                 <div class="input-group"><label>End Month</label><input type="month" class="hra-end" value="2026-06"></div>
                 <div class="input-group"><label>HRA %</label>
                     <select class="hra-rate">
@@ -399,8 +399,6 @@
         const rates = document.getElementsByClassName('hra-rate');
         
         // BUG FIX: Read from the bottom up! 
-        // This ensures that newly added custom blocks (which appear lower on the page)
-        // override the default block that spans from 2018 to 2026.
         for (let i = starts.length - 1; i >= 0; i--) {
             if (starts[i].value && ends[i].value && dateStr >= starts[i].value && dateStr <= ends[i].value) {
                 return parseFloat(rates[i].value) / 100;
@@ -456,7 +454,7 @@
             startYear = 2016;
             startMonth = 4;
             // Reverse-engineer the pre-July-2016 starting BP from the April 2017 anchor
-            drawnBP = Math.round((baseBPApr17 / 1.03) / 10) * 10;
+            drawnBP = Math.ceil((baseBPApr17 / 1.03) / 10) * 10;
             dueBP = drawnBP + (dueGP - drawnGP);
         } else {
             const joinDateStr = document.getElementById('joinDate').value;
@@ -559,19 +557,10 @@
             let drawnDA = Math.round(drawnBP * daRate);
             let dueDA = Math.round(dueBP * daRate);
 
-            // --- HRA (hardcoded frozen pre-July-2018 steps, then dynamic blocks) ---
-            let hraAmtDrawn = 0, hraAmtDue = 0;
+            // --- HRA (Dynamic block-based calculation for all periods) ---
             let dynamicHRA = getHraRate(dateStr);
-            if (dateStr >= "2016-04" && dateStr <= "2016-06") {
-                hraAmtDrawn = 1680; hraAmtDue = 1680;
-            } else if (dateStr >= "2016-07" && dateStr <= "2017-06") {
-                hraAmtDrawn = 1730; hraAmtDue = 1730;
-            } else if (dateStr >= "2017-07" && dateStr <= "2018-06") {
-                hraAmtDrawn = 1790; hraAmtDue = 1790;
-            } else {
-                hraAmtDrawn = Math.round(drawnBP * dynamicHRA);
-                hraAmtDue = Math.round(dueBP * dynamicHRA);
-            }
+            let hraAmtDrawn = Math.round(drawnBP * dynamicHRA);
+            let hraAmtDue = Math.round(dueBP * dynamicHRA);
 
             // --- Ration / KMA / City ---
             let kma = 350;
