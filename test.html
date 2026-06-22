@@ -184,6 +184,7 @@
 <div class="container">
     <div class="no-print">
         <h1>Arrear Calculator</h1>
+        <h2>by Manash</h2>
         <p style="font-size: 13px; color: #555;">
             <strong>Note:</strong> The starting Actual Drawn Grade Pay is permanently locked at <strong>₹6,200</strong>
             (₹6,400 after Level 1, if applicable). This tool does NOT predict 3% increments — every Drawn Basic Pay
@@ -252,18 +253,24 @@
         <div id="overrideContainer"></div>
         <button onclick="addOverrideRow('', '')">+ Add More Basic Pay from PaySlip</button>
 
-        <h2>HRA % Timeline</h2>
-        <p style="font-size: 12px; color: #666;">City Allowance (₹150) is strictly granted ONLY when HRA is 10%.</p>
+        <h2>HRA & Regional Allowance Timeline</h2>
+        <p style="font-size: 12px; color: #666;">City Allowance (₹150) is strictly granted ONLY when HRA is 10%. Hill/Mud allowance can be applied when HRA is 8% or 7%.</p>
         <div id="hraContainer">
             <div class="dynamic-block">
                 <div class="input-group"><label>Start Month</label><input type="month" class="hra-start" value="2016-04"></div>
                 <div class="input-group"><label>End Month</label><input type="month" class="hra-end" value="2026-06"></div>
                 <div class="input-group"><label>HRA %</label>
-                    <select class="hra-rate">
+                    <select class="hra-rate" onchange="handleHraChange(this)">
                         <option value="10">10%</option>
                         <option value="8" selected>8%</option>
                         <option value="7">7%</option>
                     </select>
+                </div>
+                <div class="input-group hill-mud-group" style="display: flex;">
+                    <label style="display:flex; align-items:center; gap:5px; margin-bottom:5px; cursor:pointer; font-weight:normal;">
+                        <input type="checkbox" class="hill-mud-check" onchange="handleHillMudCheck(this)"> Hill/Mud Allw.
+                    </label>
+                    <input type="number" class="hill-mud-val" value="480" style="display:none; width:80px;" placeholder="₹">
                 </div>
             </div>
         </div>
@@ -293,8 +300,8 @@
                     <th colspan="2" class="arrear-col" style="text-align: center;">ARREAR</th>
                 </tr>
                 <tr>
-                    <th class="drawn-col">Pay Band</th><th class="drawn-col">Grade Pay</th><th class="drawn-col">Basic Pay</th><th class="drawn-col">DA</th><th class="drawn-col">HR</th><th class="drawn-col">Medical</th><th class="drawn-col">CPA</th><th class="drawn-col">Ration</th><th class="drawn-col">KMA</th><th class="drawn-col">City</th><th class="drawn-col">Gross Pay</th><th class="drawn-col">NPS</th><th class="drawn-col">GIS</th><th class="drawn-col">PTax</th><th class="drawn-col">MMLSAY</th><th class="drawn-col">Net Pay</th>
-                    <th class="due-col">Pay Band</th><th class="due-col">Grade Pay</th><th class="due-col">Basic Pay</th><th class="due-col">DA</th><th class="due-col">HR</th><th class="due-col">Medical</th><th class="due-col">CPA</th><th class="due-col">Ration</th><th class="due-col">KMA</th><th class="due-col">City</th><th class="due-col">Gross Pay</th><th class="due-col">NPS</th><th class="due-col">GIS</th><th class="due-col">PTax</th><th class="due-col">MMLSAY</th><th class="due-col">Net Pay</th>
+                    <th class="drawn-col">Pay Band</th><th class="drawn-col">Grade Pay</th><th class="drawn-col">Basic Pay</th><th class="drawn-col">DA</th><th class="drawn-col">HR</th><th class="drawn-col">Medical</th><th class="drawn-col">CPA</th><th class="drawn-col">Ration</th><th class="drawn-col">KMA</th><th class="drawn-col">City/Oth</th><th class="drawn-col">Gross Pay</th><th class="drawn-col">NPS</th><th class="drawn-col">GIS</th><th class="drawn-col">PTax</th><th class="drawn-col">MMLSAY</th><th class="drawn-col">Net Pay</th>
+                    <th class="due-col">Pay Band</th><th class="due-col">Grade Pay</th><th class="due-col">Basic Pay</th><th class="due-col">DA</th><th class="due-col">HR</th><th class="due-col">Medical</th><th class="due-col">CPA</th><th class="due-col">Ration</th><th class="due-col">KMA</th><th class="due-col">City/Oth</th><th class="due-col">Gross Pay</th><th class="due-col">NPS</th><th class="due-col">GIS</th><th class="due-col">PTax</th><th class="due-col">MMLSAY</th><th class="due-col">Net Pay</th>
                     <th class="arrear-col">Monthly</th><th class="arrear-col">Total</th>
                 </tr>
             </thead>
@@ -306,9 +313,12 @@
         <h3>* Notes & Justifications</h3>
         <ul id="footnotesList"></ul>
     </div>
-</div>
 
-<script>
+    <div style="text-align: center; margin-top: 30px; font-size: 13px; color: #777; font-weight: bold;" class="no-print">
+        All rights reserved &copy; 2026 Manash Sharma
+    </div>
+
+</div> <script>
     // ---------------------------------------------------------------
     // Justification store for the Smart Validation Engine
     // ---------------------------------------------------------------
@@ -338,6 +348,27 @@
             if (dateStr >= daTimeline[i].month) rate = daTimeline[i].rate;
         }
         return rate;
+    }
+
+    // ---------------------------------------------------------------
+    // UI Helpers for Hill/Mud Logic
+    // ---------------------------------------------------------------
+    function handleHraChange(select) {
+        const block = select.closest('.dynamic-block');
+        const hmGroup = block.querySelector('.hill-mud-group');
+        if (select.value === '10') {
+            hmGroup.style.display = 'none';
+            // Uncheck safely if 10% is selected
+            hmGroup.querySelector('.hill-mud-check').checked = false;
+            hmGroup.querySelector('.hill-mud-val').style.display = 'none';
+        } else {
+            hmGroup.style.display = 'flex';
+        }
+    }
+
+    function handleHillMudCheck(checkbox) {
+        const valInput = checkbox.closest('.hill-mud-group').querySelector('.hill-mud-val');
+        valInput.style.display = checkbox.checked ? 'block' : 'none';
     }
 
     // ---------------------------------------------------------------
@@ -382,30 +413,50 @@
             <div class="input-group"><label>Start Month</label><input type="month" class="hra-start"></div>
             <div class="input-group"><label>End Month</label><input type="month" class="hra-end"></div>
             <div class="input-group"><label>HRA %</label>
-                <select class="hra-rate">
+                <select class="hra-rate" onchange="handleHraChange(this)">
                     <option value="10">10%</option>
                     <option value="8" selected>8%</option>
                     <option value="7">7%</option>
                 </select>
+            </div>
+            <div class="input-group hill-mud-group" style="display: flex;">
+                <label style="display:flex; align-items:center; gap:5px; margin-bottom:5px; cursor:pointer; font-weight:normal;">
+                    <input type="checkbox" class="hill-mud-check" onchange="handleHillMudCheck(this)"> Hill/Mud Allw.
+                </label>
+                <input type="number" class="hill-mud-val" value="480" style="display:none; width:80px;" placeholder="₹">
             </div>
             <button class="btn-remove" onclick="this.parentElement.remove()">X Remove</button>
         `;
         document.getElementById('hraContainer').appendChild(row);
     }
 
-    function getHraRate(dateStr) {
+    function getHraDetails(dateStr) {
         const starts = document.getElementsByClassName('hra-start');
         const ends = document.getElementsByClassName('hra-end');
         const rates = document.getElementsByClassName('hra-rate');
+        const hillChecks = document.getElementsByClassName('hill-mud-check');
+        const hillVals = document.getElementsByClassName('hill-mud-val');
         
-        // BUG FIX: Read from the bottom up! 
+        // Read from the bottom up!
         for (let i = starts.length - 1; i >= 0; i--) {
             if (starts[i].value && ends[i].value && dateStr >= starts[i].value && dateStr <= ends[i].value) {
-                return parseFloat(rates[i].value) / 100;
+                let rate = parseFloat(rates[i].value) / 100;
+                let hillMud = 0;
+                // Only capture Hill/Mud if rate is < 10% and the box is checked
+                if (rate < 0.10 && hillChecks[i] && hillChecks[i].checked) {
+                    hillMud = parseFloat(hillVals[i].value) || 0;
+                }
+                return { rate: rate, hillMud: hillMud };
             }
         }
-        // Fallback
-        return rates.length > 0 ? parseFloat(rates[0].value) / 100 : 0.08; 
+        
+        // Fallback if dates don't match any block
+        let fallbackRate = rates.length > 0 ? parseFloat(rates[0].value) / 100 : 0.08; 
+        let fallbackHillMud = 0;
+        if (fallbackRate < 0.10 && hillChecks.length > 0 && hillChecks[0].checked) {
+            fallbackHillMud = parseFloat(hillVals[0].value) || 0;
+        }
+        return { rate: fallbackRate, hillMud: fallbackHillMud };
     }
 
     window.onload = function() {
@@ -557,17 +608,18 @@
             let drawnDA = Math.round(drawnBP * daRate);
             let dueDA = Math.round(dueBP * daRate);
 
-            // --- HRA (Dynamic block-based calculation for all periods) ---
-            let dynamicHRA = getHraRate(dateStr);
+            // --- HRA & Hill/Mud ---
+            let hraDetails = getHraDetails(dateStr);
+            let dynamicHRA = hraDetails.rate;
             let hraAmtDrawn = Math.round(drawnBP * dynamicHRA);
             let hraAmtDue = Math.round(dueBP * dynamicHRA);
 
             // --- Ration / KMA / City ---
             let kma = 350;
             
-            // City Allowance strictly triggers ONLY if the underlying HRA rate is 10%.
-            // dynamicHRA >= 0.09 is used to bypass any minor floating point bugs, catching exactly 10%.
-            let city = (dynamicHRA >= 0.09) ? 150 : 0;
+            // If 10% HRA, City Allowance is strictly 150.
+            // If 8% or 7%, pull the custom Hill/Mud amount (defaults to 0 if unchecked)
+            let city = (dynamicHRA >= 0.09) ? 150 : hraDetails.hillMud;
             
             let ration = 1200; // Base historical ration
             if (dateStr >= "2023-10") {
@@ -609,7 +661,7 @@
                 <td class="drawn-col">${drawnCPA.toFixed(0)}</td>
                 <td class="drawn-col">${ration.toFixed(0)}</td>
                 <td class="drawn-col">${kma.toFixed(0)}</td>
-                <td class="drawn-col">${city.toFixed(0)}</td>
+                <td class="drawn-col">${city}</td>
                 <td class="drawn-col" style="font-weight:bold;">${drawnGross.toFixed(0)}</td>
                 <td class="drawn-col">${drawnNPS.toFixed(0)}</td>
                 <td class="drawn-col">${gis.toFixed(0)}</td>
@@ -625,7 +677,7 @@
                 <td class="due-col">${dueCPA.toFixed(0)}</td>
                 <td class="due-col">${ration.toFixed(0)}</td>
                 <td class="due-col">${kma.toFixed(0)}</td>
-                <td class="due-col">${city.toFixed(0)}</td>
+                <td class="due-col">${city}</td>
                 <td class="due-col" style="font-weight:bold;">${dueGross.toFixed(0)}</td>
                 <td class="due-col">${dueNPS.toFixed(0)}</td>
                 <td class="due-col">${gis.toFixed(0)}</td>
